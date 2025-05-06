@@ -1,0 +1,7 @@
+venv/bin/activate
+venv
+alembic.ini
+__pycache__/
+env.py
+migrations/script.py.mako
+migrations/README

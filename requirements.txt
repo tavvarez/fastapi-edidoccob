@@ -1,0 +1,9 @@
+fastapi[all]
+uvicorn
+sqlalchemy
+asyncpg
+alembic
+pydantic
+lxml
+psycopg2-binary
+python-multipart
