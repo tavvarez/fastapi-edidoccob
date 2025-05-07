@@ -28,6 +28,4 @@ def parse_cte_xml(xml_file):
     dados['valor_prestacao'] = round(float(dados['valor_prestacao']), 2) if dados['valor_prestacao'] else None
     dados['valor_mercadoria'] = round(float(dados['valor_mercadoria']), 2) if dados['valor_mercadoria'] else None
 
-    print(dados);
-
     return dados;
