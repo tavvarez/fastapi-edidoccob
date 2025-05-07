@@ -38,5 +38,4 @@ def gerar_edi(user_input_id: int, db: Session):
     db.add(novo_registro)
     db.commit()
     db.refresh(novo_registro)
-    print(conteudo)
     return novo_registro
