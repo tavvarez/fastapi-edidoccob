@@ -25,7 +25,7 @@ def build_registros(user_input, ctes):
             registros.append(build_registro_354(cte))
             
     total_valor += float(cte.valor_prestacao or 0)
-    registros.append(build_registro_355(total_valor))
+    registros.append(build_registro_355(total_valor, len(ctes)))
     return registros
 
 def build_registro_000(user_input):
@@ -99,8 +99,8 @@ def build_registro_354(cte):
     filler = pad("", 112)
     return f"354{serie_nfe}{numero_nfe}{data_nfe}{peso}{valor_merc}{cgc_emissor}{filler}"
 
-def build_registro_355(total_valor):
-    qtde_doc = pad("1", 4, 'right', '0')  # Será atualizado dinamicamente na próxima etapa
+def build_registro_355(total_valor, qtde_docs):
+    qtde_doc = pad(str(qtde_docs), 4, 'right', '0')  # Será atualizado dinamicamente na próxima etapa
     valor_total = pad(f"{total_valor:.2f}".replace(".", ""), 15, 'right', '0')
     filler = pad("", 148, 'left', ' ')
     return f"355{qtde_doc}{valor_total}{filler}"
