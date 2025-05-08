@@ -21,7 +21,7 @@ def gerar_edi(user_input_id: int, db: Session):
         raise ValueError("CTE correspondente não encontrado")
 
     data = datetime.now()
-    nome_arquivo = f"DOCCOB_{user_input.nome_cliente.replace(' ', '_')}_{data.strftime('%Y%m%d_%H%M%S')}.txt"
+    nome_arquivo = f"DOCCOB_{user_input.numero_fatura.replace(' ', '_')}_{data.strftime('%Y%m%d_%H%M%S')}.txt"
     caminho_completo = os.path.join(EDI_DIR, nome_arquivo)
 
     registros = build_registros(user_input, ctes)
