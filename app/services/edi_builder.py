@@ -100,7 +100,7 @@ def build_registro_354(cte):
     return f"354{serie_nfe}{numero_nfe}{data_nfe}{peso}{valor_merc}{cgc_emissor}{filler}"
 
 def build_registro_355(total_valor, qtde_docs):
-    qtde_doc = pad(str(qtde_docs), 4, 'right', '0')  # Será atualizado dinamicamente na próxima etapa
+    qtde_doc = pad(str(qtde_docs), 4, 'right', '0')
     valor_total = pad(f"{total_valor:.2f}".replace(".", ""), 15, 'right', '0')
     filler = pad("", 148, 'left', ' ')
     return f"355{qtde_doc}{valor_total}{filler}"

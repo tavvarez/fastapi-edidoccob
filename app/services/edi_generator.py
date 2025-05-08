@@ -2,7 +2,7 @@
 import os
 from datetime import datetime
 from sqlalchemy.orm import Session
-
+from app.models.user_input_cte_link import UserInputCTELink
 from app.models.cte import CteInfo
 from app.models.user_input import UserInput
 from app.models.edi_generated import EDIGenerated
@@ -16,7 +16,10 @@ def gerar_edi(user_input_id: int, db: Session):
     if not user_input:
         raise ValueError("User input não encontrado")
 
-    ctes = db.query(CteInfo).filter(CteInfo.numero_cte == user_input.numero_cte).all()
+    # ctes = db.query(CteInfo).filter(CteInfo.numero_cte == user_input.numero_cte).all()
+    cte_ids = db.query(UserInputCTELink.cte_info_id).filter_by(user_input_id=user_input.id).all()
+    cte_ids = [id for (id,) in cte_ids]
+    ctes = db.query(CteInfo).filter(CteInfo.id.in_(cte_ids)).all()
     if not ctes:
         raise ValueError("CTE correspondente não encontrado")
 
