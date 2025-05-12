@@ -5,3 +5,6 @@ __pycache__/
 env.py
 migrations/script.py.mako
 migrations/README
+.env
+/app/generated/edi/*
+!*/.gitkeep
