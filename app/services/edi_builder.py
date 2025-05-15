@@ -76,7 +76,7 @@ def build_registro_353(cte):
     filial = pad('010101', 10, 'left', ' ')
     serie_cte = pad(cte.serie_cte, 5, 'left', ' ')
     numero_cte = pad(cte.numero_cte, 12, 'left', '0')
-    valor_frete = pad(str(cte.valor_receber).replace(".", ""), 13, 'right', '0')
+    valor_frete = pad(str(cte.valor_receber).replace(".", ""), 15, 'right', '0')
     data_emissao = datetime.strptime(cte.data_emissao[:10], "%Y-%m-%d").strftime("%d%m%Y")
     cgc_remetente = pad(cte.cnpj_cliente, 14)
     cgc_destinatario = pad(cte.cnpj_destinatario, 14)
@@ -87,9 +87,7 @@ def build_registro_353(cte):
 def build_registro_354(cte):
     registros_nf = []
     serie_nfe = pad('0', 3, 'left', ' ')
-    data_nfe = datetime.strptime(cte.data_emissao[:10], "%Y-%m-%d").strftime("%d%m%Y")
-    peso = pad(str(round(float(cte.peso_mercadoria or 0), 2)).replace('.', ''), 5, 'right', '0')
-    valor_merc = pad(str(round(float(cte.valor_mercadoria or 0), 2)).replace('.', ''), 13, 'right', '0')
+    data_nfe = datetime.strptime(cte.data_emissao[:10], "%Y-%m-%d").strftime("%d%m%Y")  
     cgc_emissor = pad(cte.cnpj_cliente, 14)
     filler = pad("", 112, 'left', ' ')
 
@@ -97,8 +95,12 @@ def build_registro_354(cte):
     print(f"Chaves NFe: {chaves}")
     for chave in chaves:
         numero_nfe = pad(chave.strip()[25:34], 8, 'right', '0')
+        peso = pad(str(round(float(cte.peso_mercadoria or 0), 2)).replace('.', ''), 5, 'right', '0')
+        valor_merc = pad(str(round(float(cte.valor_mercadoria or 0), 2)).replace('.', ''), 15, 'right', '0')
         registro_nf = f"354{serie_nfe}{numero_nfe}{data_nfe}{peso}{valor_merc}{cgc_emissor}{filler}"
         registros_nf.append(registro_nf)
+        print(f"Peso: {peso}")
+        print(f"Valor Merc: {valor_merc}")
 
     return registros_nf
 
