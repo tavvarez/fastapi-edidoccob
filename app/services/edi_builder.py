@@ -10,21 +10,16 @@ def build_registros(user_input, ctes):
     # Registro 350
     registros.append(build_registro_350())
 
-    # Registro 351 e 352 (conteúdo fictício fixo por enquanto)
+    # Registro 351 e 352
     registros.append(build_registro_351())
     registros.append(build_registro_352(ctes, user_input))
 
     total_valor = 0
     for cte in ctes:
-        print(ctes)
-        if len(ctes) <= 1:
             registros.append(build_registro_353(cte))
-            registros.append(build_registro_354(cte))
-        else:
-            registros.append(build_registro_353(cte))
-            registros.append(build_registro_354(cte))
-            
-    total_valor += float(cte.valor_prestacao or 0)
+            registros.extend(build_registro_354(cte))
+
+    total_valor = sum(cte.valor_receber or 0 for cte in ctes)
     registros.append(build_registro_355(total_valor, len(ctes)))
     return registros
 
@@ -32,8 +27,8 @@ def build_registro_000(user_input):
     now = datetime.now();
     remetente = pad("BIALOG TRANSPORTE E LOGISTICA S.A.", 35, 'left', ' ')
     destinatario = pad(user_input.nome_cliente, 35, 'left', ' ')
-    data = now.strftime("%d%m%Y")
-    hora = now.strftime("%H%M%S")
+    data = now.strftime("%d%m%y")
+    hora = now.strftime("%H%M")
     identificacao_intercambio = f"COB{now.strftime('%d%m%H%M')}0"
     filler = pad("", 75, 'left', ' ');
     return f"000{remetente}{destinatario}{data}{hora}{identificacao_intercambio}{filler}"
@@ -57,7 +52,7 @@ def build_registro_352(ctes, user_input):
         serie_doc_cobranca = pad("0", 3)
         fatura = pad(user_input.numero_fatura, 10, 'left', ' ')
         data_emissao = datetime.strptime(ctes[0].data_emissao[:10], "%Y-%m-%d").strftime("%d%m%Y")
-        data_vencimento = (datetime.strptime(ctes[0].data_emissao[:10], "%Y-%m-%d") + timedelta(days=30)).strftime("%d%m%Y")
+        data_vencimento = (datetime.strptime(ctes[0].data_emissao[:10], "%Y-%m-%d") + timedelta(days = user_input.vencimento_fatura)).strftime("%d%m%Y")
         valor_total = sum([float(cte.valor_receber) for cte in ctes if cte.valor_receber])
         valor_total_fmt = pad(f"{valor_total:.2f}".replace(".", ""), 15, 'right', '0') # ajustar para 15 ao invés de 13
         tipo_cobranca = pad("BCO", 3, 'left', ' ')
@@ -81,7 +76,7 @@ def build_registro_353(cte):
     filial = pad('010101', 10, 'left', ' ')
     serie_cte = pad(cte.serie_cte, 5, 'left', ' ')
     numero_cte = pad(cte.numero_cte, 12, 'left', '0')
-    valor_frete = pad(str(cte.valor_receber).replace(".", ""), 13, 'right', '0')
+    valor_frete = pad(str(cte.valor_receber).replace(".", ""), 15, 'right', '0')
     data_emissao = datetime.strptime(cte.data_emissao[:10], "%Y-%m-%d").strftime("%d%m%Y")
     cgc_remetente = pad(cte.cnpj_cliente, 14)
     cgc_destinatario = pad(cte.cnpj_destinatario, 14)
@@ -90,17 +85,27 @@ def build_registro_353(cte):
     return f"353{filial}{serie_cte}{numero_cte}{valor_frete}{data_emissao}{cgc_remetente}{cgc_destinatario}{cgc_emissor}{filler}"
 
 def build_registro_354(cte):
+    registros_nf = []
     serie_nfe = pad('0', 3, 'left', ' ')
-    numero_nfe = pad(cte.chave_nfe[-8:] if cte.chave_nfe else '', 8, 'right', '0')
-    data_nfe = datetime.strptime(cte.data_emissao[:10], "%Y-%m-%d").strftime("%d%m%Y")
-    peso = pad(str(round(float(cte.peso_mercadoria or 0), 2)).replace('.', ''), 5, 'right', '0')
-    valor_merc = pad(str(round(float(cte.valor_mercadoria or 0), 2)).replace('.', ''), 13, 'right', '0')
+    data_nfe = datetime.strptime(cte.data_emissao[:10], "%Y-%m-%d").strftime("%d%m%Y")  
     cgc_emissor = pad(cte.cnpj_cliente, 14)
-    filler = pad("", 112)
-    return f"354{serie_nfe}{numero_nfe}{data_nfe}{peso}{valor_merc}{cgc_emissor}{filler}"
+    filler = pad("", 112, 'left', ' ')
+
+    chaves = cte.chave_nfe.split(',') if cte.chave_nfe else ['']
+    print(f"Chaves NFe: {chaves}")
+    for chave in chaves:
+        numero_nfe = pad(chave.strip()[25:34], 8, 'right', '0')
+        peso = pad(str(round(float(cte.peso_mercadoria or 0), 2)).replace('.', ''), 5, 'right', '0')
+        valor_merc = pad(str(round(float(cte.valor_mercadoria or 0), 2)).replace('.', ''), 15, 'right', '0')
+        registro_nf = f"354{serie_nfe}{numero_nfe}{data_nfe}{peso}{valor_merc}{cgc_emissor}{filler}"
+        registros_nf.append(registro_nf)
+        print(f"Peso: {peso}")
+        print(f"Valor Merc: {valor_merc}")
+
+    return registros_nf
 
 def build_registro_355(total_valor, qtde_docs):
     qtde_doc = pad(str(qtde_docs), 4, 'right', '0')
-    valor_total = pad(f"{total_valor:.2f}".replace(".", ""), 15, 'right', '0')
+    valor_total = pad(f"{float(total_valor):.2f}".replace(".", ""), 15, 'right', '0')
     filler = pad("", 148, 'left', ' ')
     return f"355{qtde_doc}{valor_total}{filler}"

@@ -5,14 +5,15 @@ from app.models.user_input import UserInput
 from app.models.user_input_cte_link import UserInputCTELink
 from app.schemas.user_input_schema import UserInputCreate, UserInputOut
 
-router = APIRouter();
+router = APIRouter()
 
 @router.post("/", response_model=UserInputOut)
 def create_user_input(data: UserInputCreate, db: Session = Depends(get_db)):
     try:
         novo = UserInput(
             nome_cliente = data.nome_cliente,
-            numero_fatura = data.numero_fatura
+            numero_fatura = data.numero_fatura,
+            vencimento_fatura = data.vencimento_fatura
         )
         db.add(novo)
         db.flush()
