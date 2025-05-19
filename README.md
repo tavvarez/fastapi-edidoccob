@@ -60,14 +60,14 @@ uvicorn app.main:app --reload
 7. Acesse a documentação interativa:
    [http://localhost:8000/docs](http://localhost:8000/docs)
 
-## 🔍 Endpoints principais
+## Endpoints principais
 
 * `POST /upload-xml`: Envia um ou mais arquivos XML
 * `POST /user-input/`: Recebe dados do usuário e vincula aos CT-es
 * `POST /gerar-edi/{user_input_id}`: Gera o arquivo EDI
 * `GET /download-edi/{user_input_id}`: Faz o download do EDI gerado
 
-## 🔧 Tecnologias
+## Tecnologias
 
 * FastAPI + Pydantic
 * SQLAlchemy + Alembic
@@ -75,7 +75,7 @@ uvicorn app.main:app --reload
 * lxml (parsing de XML)
 * Uvicorn
 
-## 🖋️ Observações
+## Observações
 
 * Os arquivos gerados seguem fielmente o layout DOCCOB conforme a documentação do Proceda 3.0
 * A aplicação pode ser expandida com autenticação, UI em React ou Streamlit, integração direta com Protheus, etc...
