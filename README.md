@@ -57,7 +57,7 @@ alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
-7. Acesse a documentação interativa:
+7. Acesse a documentação:
    [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ## Endpoints principais
