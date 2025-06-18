@@ -29,4 +29,4 @@ def create_user_input(data: UserInputCreate, db: Session = Depends(get_db)):
         db.refresh(novo)
         return novo
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e));
+        raise HTTPException(status_code=500, detail=str(e))

@@ -60,11 +60,11 @@ def build_registro_352(ctes, user_input):
         juros = pad("", 15, 'right', ' ')
         limite_desc = pad("", 8)
         valor_desc = pad("", 15)
-        banco = pad("BANCO COOPERATIVO SICREDI", 35, 'left', ' ')
-        agencia = pad("2601", 4)
-        dig_ag = pad("0", 1)
-        conta = pad("123456", 10)
-        dig_cc = pad("0", 2)
+        banco = pad("", 35, 'left', ' ')
+        agencia = pad("", 4)
+        dig_ag = pad("", 1)
+        conta = pad("", 10)
+        dig_cc = pad("", 2)
         acao = "I"
         filler = pad("", 3, 'left', ' ')
         return f"352{filial}{tipo_doc_cobranca}{serie_doc_cobranca}{fatura}{data_emissao}{data_vencimento}{valor_total_fmt}{tipo_cobranca}{valor_icms}{juros}{limite_desc}{valor_desc}{banco}{agencia}{dig_ag}{conta}{dig_cc}{acao}{filler}"
@@ -75,32 +75,29 @@ def build_registro_352(ctes, user_input):
 def build_registro_353(cte):
     filial = pad('010101', 10, 'left', ' ')
     serie_cte = pad(cte.serie_cte, 5, 'left', ' ')
-    numero_cte = pad(cte.numero_cte, 12, 'left', '0')
+    numero_cte = pad(cte.numero_cte, 12, 'right', '0')
     valor_frete = pad(str(cte.valor_receber).replace(".", ""), 15, 'right', '0')
     data_emissao = datetime.strptime(cte.data_emissao[:10], "%Y-%m-%d").strftime("%d%m%Y")
     cgc_remetente = pad(cte.cnpj_cliente, 14)
     cgc_destinatario = pad(cte.cnpj_destinatario, 14)
     cgc_emissor = pad("35285109000105", 14)
-    filler = pad("", 75)
+    filler = pad("", 75, 'left', ' ')
     return f"353{filial}{serie_cte}{numero_cte}{valor_frete}{data_emissao}{cgc_remetente}{cgc_destinatario}{cgc_emissor}{filler}"
 
 def build_registro_354(cte):
     registros_nf = []
-    serie_nfe = pad('0', 3, 'left', ' ')
-    data_nfe = datetime.strptime(cte.data_emissao[:10], "%Y-%m-%d").strftime("%d%m%Y")  
+    serie_nfe = pad('1', 3, 'left', ' ')
+    data_nfe = pad(datetime.strptime(cte.data_emissao[:10], "%Y-%m-%d").strftime("%d%m%Y"), 8) 
     cgc_emissor = pad(cte.cnpj_cliente, 14)
     filler = pad("", 112, 'left', ' ')
 
     chaves = cte.chave_nfe.split(',') if cte.chave_nfe else ['']
-    print(f"Chaves NFe: {chaves}")
     for chave in chaves:
-        numero_nfe = pad(chave.strip()[25:34], 8, 'right', '0')
-        peso = pad(str(round(float(cte.peso_mercadoria or 0), 2)).replace('.', ''), 5, 'right', '0')
+        numero_nfe = pad(chave.strip()[28:34], 8, 'right', '0')
+        peso = pad(str(round(float(cte.peso_mercadoria or 0), 2)).replace('.', ''), 7, 'right', '0')
         valor_merc = pad(str(round(float(cte.valor_mercadoria or 0), 2)).replace('.', ''), 15, 'right', '0')
         registro_nf = f"354{serie_nfe}{numero_nfe}{data_nfe}{peso}{valor_merc}{cgc_emissor}{filler}"
         registros_nf.append(registro_nf)
-        print(f"Peso: {peso}")
-        print(f"Valor Merc: {valor_merc}")
 
     return registros_nf
 
